@@ -4,7 +4,7 @@ const BlockType = require('../../extension-support/block-type');
 const Cast = require('../../util/cast');
 const MathUtil = require('../../util/math-util');
 
-class Simulator {
+class Tactode {
     constructor (runtime) {
         this.runtime = runtime;
     }
@@ -41,19 +41,29 @@ class Simulator {
      */
     getInfo () {
         return {
-            id: 'simulator',
+            id: 'tactode',
 
             // opcional
             color1: '#444f82',
             color2: '#363f6b',
             
-            name: 'Web Simulator',
+            name: 'Tactode',
 
             blocks: [
                 {
-                    opcode: 'moveUntilTarget',
+                    opcode: 'followLine',
                     blockType: BlockType.COMMAND,
-                    text: 'move until [TARGET]',
+                    text: 'follow [COLOR] line',
+                    arguments: {
+                        COLOR: {
+                            type: ArgumentType.COLOR
+                        }
+                    }
+                },
+                {
+                    opcode: 'moveToTarget',
+                    blockType: BlockType.COMMAND,
+                    text: 'move to [TARGET]',
                     arguments: {
                         TARGET: {
                             type: ArgumentType.STRING,
@@ -140,7 +150,7 @@ class Simulator {
         util.target.setDirection(util.target.direction + angle);
     }
 
-    moveUntilTarget(args, util) {
+    moveToTarget(args, util) {
         const target = Cast.toNumber(args.TARGET);
         if (target === 0) {
             util.target.setXY(util.ioQuery('mouse', 'getScratchX'),util.ioQuery('mouse', 'getScratchY'));
@@ -151,6 +161,11 @@ class Simulator {
         if (!goToTarget) return;
         util.target.setXY(goToTarget.x, goToTarget.y);
     }
+
+    followLine(args, util) {
+        
+        return;
+    }
 }
 
-module.exports = Simulator
+module.exports = Tactode

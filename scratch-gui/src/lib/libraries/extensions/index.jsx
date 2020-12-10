@@ -319,16 +319,16 @@ export default [
         helpLink: 'https://scratch.mit.edu/vernier'
     },
     {
-        name: 'Web Simulator',
-        extensionId: 'simulator',
+        name: 'Tactode',
+        extensionId: 'tactode',
         collaborator: 'Tactode',
         iconURL: ev3IconURL,
         insetIconURL: wedo2InsetIconURL,
         description: (
             <FormattedMessage
-                defaultMessage="Web simualtor"
+                defaultMessage="Tactode"
                 description="extension"
-                id="gui.extension.simulator.description"
+                id="gui.extension.tactode.description"
             />
         ),
         featured: true,
