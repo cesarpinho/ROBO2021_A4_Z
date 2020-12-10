@@ -9,6 +9,33 @@ class Simulator {
         this.runtime = runtime;
     }
 
+    getTargets () {
+        this.targets = [ {
+            text: 'mouse pointer',
+            value: '0'
+        }];
+        let counter = 1;
+        const actualTarget = this.runtime.getEditingTarget();
+
+
+        if (actualTarget === undefined || actualTarget === null)
+            return this.targets;
+
+        // substitute value 10
+        for (let i = 0; i < 10; i++) {
+            const value = this.runtime.getTargetByDrawableId(i)
+            if (value !== undefined && !value.isStage && 
+                value.sprite.name !== actualTarget.sprite.name) {
+                const obj = {};
+                obj.text = value.sprite.name;
+                obj.value = counter.toString();
+                this.targets.push(obj);
+                counter++;
+            }
+        }
+        return this.targets;
+    }
+
     /**
      * @return {object} This extension's metadata.
      */
@@ -23,6 +50,17 @@ class Simulator {
             name: 'Web Simulator',
 
             blocks: [
+                {
+                    opcode: 'moveUntilTarget',
+                    blockType: BlockType.COMMAND,
+                    text: 'move until [TARGET]',
+                    arguments: {
+                        TARGET: {
+                            type: ArgumentType.STRING,
+                            menu: 'menuTarget'
+                        }
+                    }
+                },
                 {
                     // Required: the machine-readable name of this operation.
                     // This will appear in project JSON.
@@ -81,19 +119,15 @@ class Simulator {
                     // If absent, assume `func` is the same as `opcode`.
                     // func: 'myReporter2'
                 }
-            ]
-        };
-    }
+            ],
 
-    /**
-     * Implement myReporter.
-     * @param {object} args - the block's arguments.
-     * @property {string} MY_ARG - the string value of the argument.
-     * @returns {string} a string which includes the block argument value.
-     */
-    myReporter (args) {
-        return 'Letter ' + args.LETTER_NUM + ' of ' +
-        args.TEXT + ' is ' + args.TEXT.charAt(args.LETTER_NUM) + '.';
+            menus: {
+                menuTarget: {
+                    acceptReporters: true,
+                    items: this.getTargets()
+                }
+            }
+        };
     }
 
     example (args, util) {
@@ -104,6 +138,18 @@ class Simulator {
         const dy = steps * Math.sin(radians);
         util.target.setXY(util.target.x + dx, util.target.y + dy);
         util.target.setDirection(util.target.direction + angle);
+    }
+
+    moveUntilTarget(args, util) {
+        const target = Cast.toNumber(args.TARGET);
+        if (target === 0) {
+            util.target.setXY(util.ioQuery('mouse', 'getScratchX'),util.ioQuery('mouse', 'getScratchY'));
+            return;
+        }
+        const targetName = this.targets[target].text;
+        const goToTarget = this.runtime.getSpriteTargetByName(targetName);
+        if (!goToTarget) return;
+        util.target.setXY(goToTarget.x, goToTarget.y);
     }
 }
 

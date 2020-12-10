@@ -321,9 +321,9 @@ export default [
     {
         name: 'Web Simulator',
         extensionId: 'simulator',
-        collaborator: 'Gui Ruedes',
-        iconURL: gdxforIconURL,
-        insetIconURL: gdxforInsetIconURL,
+        collaborator: 'Tactode',
+        iconURL: ev3IconURL,
+        insetIconURL: wedo2InsetIconURL,
         description: (
             <FormattedMessage
                 defaultMessage="Web simualtor"
@@ -334,6 +334,5 @@ export default [
         featured: true,
         disabled: false,
         internetConnectionRequired: true,
-        helpLink: 'https://scratch.mit.edu/vernier'
     }
 ];

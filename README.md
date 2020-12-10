@@ -4,7 +4,7 @@
 
  * Python 2.7
  * Java
- * Google Closure Library  `npm i google-closure-compiler -g`
+ * NodeJs
 
 ## Create dependencies
 
@@ -17,17 +17,11 @@ npm link
 
 npm run watch
 
-cd ../scratch-blocks
-
-npm install
-
-npm link
-
 cd ../scratch-gui
 
 npm install
 
-npm link scratch-vm scratch-blocks
+npm link scratch-vm
 
 npm start
 
