@@ -12,7 +12,7 @@
  * - isOpen()
  */
 class TactodeLinkWebSocket {
-    constructor (type) {
+    constructor(type) {
         this._onOpen = null;
         this._onClose = null;
         this._onError = null;
@@ -21,8 +21,21 @@ class TactodeLinkWebSocket {
         this._ws = null;
     }
 
-    open () {
-        this._ws = new WebSocket('wss://device-manager.scratch.mit.edu:20110/scratch/ble'); // Url need to be set
+    // * For runtime config with this factory, need support BLE and BT types
+    open() {
+        switch (this._type) {
+            case 'BLE':
+                this._ws = new WebSocket('wss://device-manager.scratch.mit.edu:20110/scratch/ble');
+                break;
+            case 'BT':
+                this._ws = new WebSocket('wss://device-manager.scratch.mit.edu:20110/scratch/bt');
+                break;
+            case 'WEB':
+                this._ws = new WebSocket('wss://device-manager.scratch.mit.edu:20110/scratch/ble'); // Url need to be set
+                break;
+            default:
+                throw new Error(`Unknown ScratchLink socket Type: ${this._type}`);
+        }
 
         if (this._onOpen && this._onClose && this._onError && this._handleMessage) {
             this._ws.onopen = this._onOpen;
@@ -35,37 +48,37 @@ class TactodeLinkWebSocket {
         this._ws.onmessage = this._onMessage.bind(this);
     }
 
-    close () {
+    close() {
         this._ws.close();
         this._ws = null;
     }
 
-    sendMessage (message) {
+    sendMessage(message) {
         const messageText = JSON.stringify(message);
         this._ws.send(messageText);
     }
 
-    setOnOpen (fn) {
+    setOnOpen(fn) {
         this._onOpen = fn;
     }
 
-    setOnClose (fn) {
+    setOnClose(fn) {
         this._onClose = fn;
     }
 
-    setOnError (fn) {
+    setOnError(fn) {
         this._onError = fn;
     }
 
-    setHandleMessage (fn) {
+    setHandleMessage(fn) {
         this._handleMessage = fn;
     }
 
-    isOpen () {
+    isOpen() {
         return this._ws && this._ws.readyState === this._ws.OPEN;
     }
 
-    _onMessage (e) {
+    _onMessage(e) {
         const json = JSON.parse(e.data);
         this._handleMessage(json);
     }

@@ -3,10 +3,18 @@ const BlockType = require('../../extension-support/block-type');
 
 const Cast = require('../../util/cast');
 const MathUtil = require('../../util/math-util');
+const Robot = require('./robot');
 
 class Tactode {
+
+    static get EXTENSION_ID () {
+        return 'tactode';
+    }
+
     constructor (runtime) {
         this.runtime = runtime;
+
+        this._peripheral = new Robot(this.runtime, Tactode.EXTENSION_ID)
     }
 
     getTargets () {
@@ -41,7 +49,7 @@ class Tactode {
      */
     getInfo () {
         return {
-            id: 'tactode',
+            id: Tactode.EXTENSION_ID,
 
             // opcional
             color1: '#444f82',
@@ -51,12 +59,37 @@ class Tactode {
 
             blocks: [
                 {
-                    opcode: 'followLine',
+                    opcode: 'sensor',
+                    blockType: BlockType.REPORTER,
+                    text: 'line distance'
+                },
+                {
+                    opcode: 'turnMotorSeconds',
                     blockType: BlockType.COMMAND,
-                    text: 'follow [COLOR] line',
+                    text: 'turn [MOTOR] motor for [SEC] seconds',
                     arguments: {
-                        COLOR: {
-                            type: ArgumentType.COLOR
+                        MOTOR: {
+                            type: ArgumentType.STRING,
+                            menu: 'menuMotor'
+                        },
+                        SEC: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 1
+                        }
+                    }
+                },
+                {
+                    opcode: 'turnMotorRotation',
+                    blockType: BlockType.COMMAND,
+                    text: 'turn [MOTOR] motor for [ROTS] rotations',
+                    arguments: {
+                        MOTOR: {
+                            type: ArgumentType.STRING,
+                            menu: 'menuMotor'
+                        },
+                        ROTS: {
+                            type: ArgumentType.NUMBER,
+                            defaultValue: 1
                         }
                     }
                 },
@@ -72,62 +105,18 @@ class Tactode {
                     }
                 },
                 {
-                    // Required: the machine-readable name of this operation.
-                    // This will appear in project JSON.
                     opcode: 'example',
-
-                    // Required: the kind of block we're defining, from a predefined list.
-                    // Fully supported block types:
-                    //   BlockType.BOOLEAN - same as REPORTER but returns a Boolean value
-                    //   BlockType.COMMAND - a normal command block, like "move {} steps"
-                    //   BlockType.HAT - starts a stack if its value changes from falsy to truthy ("edge triggered")
-                    //   BlockType.REPORTER - returns a value, like "direction"
-                    // Block types in development or for internal use only:
-                    //   BlockType.BUTTON - place a button in the block palette
-                    //   BlockType.CONDITIONAL - control flow, like "if {}" or "if {} else {}"
-                    //     A CONDITIONAL block may return the one-based index of a branch to
-                    //     run, or it may return zero/falsy to run no branch.
-                    //   BlockType.EVENT - starts a stack in response to an event (full spec TBD)
-                    //   BlockType.LOOP - control flow, like "repeat {} {}" or "forever {}"
-                    //     A LOOP block is like a CONDITIONAL block with two differences:
-                    //     - the block is assumed to have exactly one child branch, and
-                    //     - each time a child branch finishes, the loop block is called again.
                     blockType: BlockType.COMMAND,
-
-                    // Required for CONDITIONAL blocks, ignored for others: the number of
-                    // child branches this block controls. An "if" or "repeat" block would
-                    // specify a branch count of 1; an "if-else" block would specify a
-                    // branch count of 2.
-                    // branchCount: 0,
-
-                    // Required: the human-readable text on this block, including argument
-                    // placeholders. Argument placeholders should be in [MACRO_CASE] and
-                    // must be [ENCLOSED_WITHIN_SQUARE_BRACKETS].
                     text: 'move [STEPS] and rotate [ANGLE]',
-
-                    // Required: describe each argument.
-                    // Argument order may change during translation, so arguments are
-                    // identified by their placeholder name. In those situations where
-                    // arguments must be ordered or assigned an ordinal, such as interaction
-                    // with Scratch Blocks, arguments are ordered as they are in the default
-                    // translation (probably English).
                     arguments: {
-                        // Required: the ID of the argument, which will be the name in the
-                        // args object passed to the implementation function.
                         STEPS: {
-                            // Required: type of the argument / shape of the block input
                             type: ArgumentType.NUMBER,
-
                             defaultValue: 80
                         },
                         ANGLE: {
                             type: ArgumentType.ANGLE,
                         }
-                    },
-
-                    // Optional: the function implementing this block.
-                    // If absent, assume `func` is the same as `opcode`.
-                    // func: 'myReporter2'
+                    }
                 }
             ],
 
@@ -135,6 +124,19 @@ class Tactode {
                 menuTarget: {
                     acceptReporters: true,
                     items: this.getTargets()
+                },
+                menuMotor: {
+                    acceptReporters: false,
+                    items: [
+                        {
+                            text: 'left',
+                            value: 'l'
+                        },
+                        {
+                            text: 'right',
+                            value: 'r'
+                        }
+                    ]
                 }
             }
         };
@@ -150,7 +152,7 @@ class Tactode {
         util.target.setDirection(util.target.direction + angle);
     }
 
-    moveToTarget(args, util) {
+    moveToTarget (args, util) {
         const target = Cast.toNumber(args.TARGET);
         if (target === 0) {
             util.target.setXY(util.ioQuery('mouse', 'getScratchX'),util.ioQuery('mouse', 'getScratchY'));
@@ -162,9 +164,27 @@ class Tactode {
         util.target.setXY(goToTarget.x, goToTarget.y);
     }
 
-    followLine(args, util) {
+    sensor () {
+        console.log("Sensor position: 2");
+        return 2;
+    }
+
+    turnMotorSeconds (args, util) {
+        const motorIndex = Cast.toString(args.MOTOR) === 'l' ? 0 : 1;
+        const time = Cast.toNumber(args.SEC);
+        console.log("Motor index " + motorIndex);
+        console.log("Time " + time);
         
-        return;
+        util.target.setXY(util.target.x + time, util.target.y);
+    }
+
+    turnMotorRotation (args, util) {
+        const motorIndex = Cast.toString(args.MOTOR) === 'l' ? 0 : 1;
+        const rots = Cast.toNumber(args.ROTS);
+        console.log("Motor index " + motorIndex);
+        console.log("Rotations " + rots);
+        
+        util.target.setXY(util.target.x + rots*2, util.target.y);
     }
 }
 
