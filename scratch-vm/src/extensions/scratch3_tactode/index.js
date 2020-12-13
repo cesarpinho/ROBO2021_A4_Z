@@ -12,6 +12,9 @@ class Tactode {
     }
 
     constructor (runtime) {
+        // 1. Instantiate TactodeLinkWebSocket class.
+        // 2. Define handle message method
+        // 3. Open connection with tactode link
         this.runtime = runtime;
 
         this._peripheral = new Robot(this.runtime, Tactode.EXTENSION_ID)
