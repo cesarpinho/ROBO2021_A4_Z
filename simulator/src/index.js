@@ -1,3 +1,4 @@
+import * as TactodeLinkWebSocket from './tactode-link-websocket'
 import * as PIXI from 'pixi.js'
 
 PIXI.utils.sayHello(PIXI.utils.isWebGLSupported() ? "WebGL" : "canvas");
@@ -20,4 +21,10 @@ app.loader.add('robot', 'assets/robot.png').load((_loader, resources) => {
 
     // Add the robot to the scene
     app.stage.addChild(robot);
+
+    const tactodeLinkWebSocket = new TactodeLinkWebSocket()
+    tactodeLinkWebSocket.setHandleMessage(() => {
+        robot.x += 1;
+    });
+    tactodeLinkWebSocket.open();
 });

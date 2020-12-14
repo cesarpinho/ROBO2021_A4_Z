@@ -1,5 +1,3 @@
-const WebSocket = require('ws');
-
 class TactodeLinkWebSocket {
     
     constructor(type = 'Web') {       
@@ -34,9 +32,10 @@ class TactodeLinkWebSocket {
         this._ws = null
     }
 
-    sendMessage(message) {      
-        this._ws.send(JSON.stringify(message))
-        console.log(`SIMULATOR :: Sending the following message to Tactode WebSocket Server: ${message}`)        
+    sendMessage(message) {   
+        const data = JSON.stringify(message)
+        this._ws.send(data)
+        console.log(`SIMULATOR :: Sending the following message to Tactode WebSocket Server: ${data}`)       
     }
 
     // -------------------------------------------------------------------------------------- //
@@ -77,6 +76,7 @@ class TactodeLinkWebSocket {
 
     _onMessage(e) {        
         const json = JSON.parse(e.data)
+        console.log(`SIMULATOR :: Receiving the following message from Tactode WebSocket Server: ${e.data}`)
         this._handleMessage(json)
     }
 
