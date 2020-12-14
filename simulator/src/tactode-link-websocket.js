@@ -1,6 +1,6 @@
-const WebSocket = require('ws')
+const WebSocket = require('ws');
 
-class TactodeLinkClient {  
+class TactodeLinkWebSocket {
     
     constructor(type = 'Web') {       
         this._type = type
@@ -9,7 +9,7 @@ class TactodeLinkClient {
     open() {
         switch (this._type) {
             case 'Web':
-                this._ws = new WebSocket('ws://localhost:8081') // Simulator: Define Url
+                this._ws = new WebSocket('ws://localhost:8080?type=SIMULATOR') // TactodeLink: Define Url
                 break
             default:
                 throw new Error(`Unknown TactodeLink Socket Type: ${this._type}`)
@@ -21,7 +21,7 @@ class TactodeLinkClient {
         this._ws.onopen = this._onOpen.bind(this)
         this._ws.onclose = this._onClose.bind(this)
         this._ws.onerror = this._onError.bind(this)
-        this._ws.onmessage = this._onMessage.bind(this)
+        this._ws.onmessage = this._onMessage.bind(this)        
     }
     
     isOpen() {
@@ -36,6 +36,7 @@ class TactodeLinkClient {
 
     sendMessage(message) {      
         this._ws.send(JSON.stringify(message))
+        console.log(`SIMULATOR :: Sending the following message to Tactode WebSocket Server: ${message}`)        
     }
 
     // -------------------------------------------------------------------------------------- //
@@ -62,17 +63,16 @@ class TactodeLinkClient {
     // --------------------------------- Default Methods --------------------------------- //
     // ----------------------------------------------------------------------------------- //
 
-    _onOpen() {        
-        this.sendMessage("asdasd")
-        console.log('TACTODE-LINK-CLIENT :: Connection established with Tactode WebSocket Server')
+    _onOpen() {
+        console.log('SIMULATOR :: Connection established with Tactode WebSocket Server')
     }
 
     _onClose() {
-        console.log('TACTODE-LINK-CLIENT :: Connection terminated with Tactode WebSocket Server')
+        console.log('SIMULATOR :: Connection terminated with Tactode WebSocket Server')
     }
 
     _onError(error) {
-        console.log(`TACTODE-LINK-CLIENT :: ${error}`)
+        console.log(`SIMULATOR :: ${error}`)
     }
 
     _onMessage(e) {        
@@ -82,4 +82,4 @@ class TactodeLinkClient {
 
 }
 
-module.exports = TactodeLinkClient
+module.exports = TactodeLinkWebSocket

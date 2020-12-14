@@ -1,18 +1,5 @@
 const WebSocket = require('ws')
 
-/**
- * This class provides a TactodeLinkSocket implementation using WebSockets,
- * attempting to connect with the locally installed Tactode-Link.
- *
- * To connect with TactodeLink without WebSockets, you must implement all of the
- * public methods in this class.
- * - open()
- * - close()
- * - setOn[Open|Close|Error]
- * - setHandleMessage
- * - sendMessage(msgObj)
- * - isOpen()
- */
 class TactodeLinkWebSocket {
 
     constructor(type = 'Web') {       
@@ -22,7 +9,7 @@ class TactodeLinkWebSocket {
     open() {
         switch (this._type) {
             case 'Web':
-                this._ws = new WebSocket('ws://localhost:8080') // TactodeLink: Define Url
+                this._ws = new WebSocket('ws://localhost:8080?type=EXTENSION')
                 break
             default:
                 throw new Error(`Unknown TactodeLink Socket Type: ${this._type}`)
@@ -49,6 +36,7 @@ class TactodeLinkWebSocket {
 
     sendMessage(message) {      
         this._ws.send(JSON.stringify(message))
+        console.log(`EXTENSION :: Sending the following message to Tactode WebSocket Server: ${message}`)
     }
 
     // -------------------------------------------------------------------------------------- //
@@ -75,17 +63,16 @@ class TactodeLinkWebSocket {
     // --------------------------------- Default Methods --------------------------------- //
     // ----------------------------------------------------------------------------------- //
 
-    _onOpen() {
-        this.sendMessage("Teste")
-        console.log('TACTODE-LINK-WEBSOCKET :: Connection established with Tactode WebSocket Server')
+    _onOpen() {        
+        console.log('EXTENSION :: Connection established with Tactode WebSocket Server')
     }
 
     _onClose() {
-        console.log('TACTODE-LINK-WEBSOCKET :: Connection terminated with Tactode WebSocket Server')
+        console.log('EXTENSION :: Connection terminated with Tactode WebSocket Server')
     }
 
     _onError(error) {
-        console.log(`TACTODE-LINK-WEBSOCKET :: ${error}`)
+        console.log(`EXTENSION :: ${error}`)
     }
 
     _onMessage(e) {        
@@ -95,12 +82,4 @@ class TactodeLinkWebSocket {
 
 }
 
-let sample = new TactodeLinkWebSocket()
-
-sample.setHandleMessage(function() {
-    console.log("Enviou")
-})
-
-sample.open() 
-
-// module.exports = TactodeLinkWebSocket
+module.exports = TactodeLinkWebSocket
