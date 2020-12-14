@@ -4,6 +4,7 @@ const BlockType = require('../../extension-support/block-type');
 const Cast = require('../../util/cast');
 const MathUtil = require('../../util/math-util');
 const Robot = require('./robot');
+const TactodeLinkWebSocket = require('./tactode-link-websocket');
 
 class Tactode {
 
@@ -16,6 +17,12 @@ class Tactode {
         // 2. Define handle message method
         // 3. Open connection with tactode link
         this.runtime = runtime;
+
+        this._socket = new TactodeLinkWebSocket('Web');
+        this._socket.setHandleMessage((json) => {
+            console.log(`Handle Message ${json}`)
+        })
+        this._socket.open();
 
         this._peripheral = new Robot(this.runtime, Tactode.EXTENSION_ID)
     }
@@ -168,7 +175,9 @@ class Tactode {
     }
 
     sensor () {
-        console.log("Sensor position: 2");
+        this._socket.sendMessage({
+            message: 'Sensor message'
+        })
         return 2;
     }
 
