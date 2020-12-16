@@ -35,8 +35,9 @@ class TactodeLinkWebSocket {
     }
 
     sendMessage(message) {      
-        this._ws.send(JSON.stringify(message))
-        console.log(`EXTENSION :: Sending the following message to Tactode WebSocket Server: ${message}`)
+        const data = JSON.stringify(message)
+        this._ws.send(data)
+        console.log(`EXTENSION :: Sending the following message to Tactode WebSocket Server: ${data}`)    
     }
 
     // -------------------------------------------------------------------------------------- //
@@ -77,6 +78,7 @@ class TactodeLinkWebSocket {
 
     _onMessage(e) {        
         const json = JSON.parse(e.data)
+        console.log(`EXTENSION :: Receiving the following message from Tactode WebSocket Server: ${e.data}`)
         this._handleMessage(json)
     }
 
