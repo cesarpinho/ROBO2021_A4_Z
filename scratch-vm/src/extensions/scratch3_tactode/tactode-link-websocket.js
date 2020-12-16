@@ -1,5 +1,3 @@
-// const WebSocket = require('ws')
-
 class TactodeLinkWebSocket {
 
     constructor(type = 'Web') {       

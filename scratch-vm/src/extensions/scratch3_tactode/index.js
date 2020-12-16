@@ -13,46 +13,44 @@ class Tactode {
     }
 
     constructor (runtime) {
-        // 1. Instantiate TactodeLinkWebSocket class.
-        // 2. Define handle message method
-        // 3. Open connection with tactode link
         this.runtime = runtime;
 
         this._socket = new TactodeLinkWebSocket('Web');
-        this._socket.setHandleMessage((json) => {
-            console.log(`Handle Message ${json}`)
+        this._socket.setHandleMessage(() => {
+            console.log("Handle Message Tactode extension")
         })
         this._socket.open();
 
         this._peripheral = new Robot(this.runtime, Tactode.EXTENSION_ID)
     }
 
-    getTargets () {
-        this.targets = [ {
-            text: 'mouse pointer',
-            value: '0'
-        }];
-        let counter = 1;
-        const actualTarget = this.runtime.getEditingTarget();
+    
+    // getTargets () {
+    //     this.targets = [ {
+    //         text: 'mouse pointer',
+    //         value: '0'
+    //     }];
+    //     let counter = 1;
+    //     const actualTarget = this.runtime.getEditingTarget();
 
 
-        if (actualTarget === undefined || actualTarget === null)
-            return this.targets;
+    //     if (actualTarget === undefined || actualTarget === null)
+    //         return this.targets;
 
-        // substitute value 10
-        for (let i = 0; i < 10; i++) {
-            const value = this.runtime.getTargetByDrawableId(i)
-            if (value !== undefined && !value.isStage && 
-                value.sprite.name !== actualTarget.sprite.name) {
-                const obj = {};
-                obj.text = value.sprite.name;
-                obj.value = counter.toString();
-                this.targets.push(obj);
-                counter++;
-            }
-        }
-        return this.targets;
-    }
+    //     // substitute value 10
+    //     for (let i = 0; i < 10; i++) {
+    //         const value = this.runtime.getTargetByDrawableId(i)
+    //         if (value !== undefined && !value.isStage && 
+    //             value.sprite.name !== actualTarget.sprite.name) {
+    //             const obj = {};
+    //             obj.text = value.sprite.name;
+    //             obj.value = counter.toString();
+    //             this.targets.push(obj);
+    //             counter++;
+    //         }
+    //     }
+    //     return this.targets;
+    // }
 
     /**
      * @return {object} This extension's metadata.
@@ -74,104 +72,28 @@ class Tactode {
                     text: 'line distance'
                 },
                 {
-                    opcode: 'turnMotorSeconds',
+                    opcode: 'goForward',
                     blockType: BlockType.COMMAND,
-                    text: 'turn [MOTOR] motor for [SEC] seconds',
-                    arguments: {
-                        MOTOR: {
-                            type: ArgumentType.STRING,
-                            menu: 'menuMotor'
-                        },
-                        SEC: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 1
-                        }
-                    }
+                    text: 'go forward'
                 },
                 {
-                    opcode: 'turnMotorRotation',
+                    opcode: 'turn',
                     blockType: BlockType.COMMAND,
-                    text: 'turn [MOTOR] motor for [ROTS] rotations',
+                    text: 'turn [ANGLE]',
                     arguments: {
-                        MOTOR: {
-                            type: ArgumentType.STRING,
-                            menu: 'menuMotor'
-                        },
-                        ROTS: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 1
-                        }
-                    }
-                },
-                {
-                    opcode: 'moveToTarget',
-                    blockType: BlockType.COMMAND,
-                    text: 'move to [TARGET]',
-                    arguments: {
-                        TARGET: {
-                            type: ArgumentType.STRING,
-                            menu: 'menuTarget'
-                        }
-                    }
-                },
-                {
-                    opcode: 'example',
-                    blockType: BlockType.COMMAND,
-                    text: 'move [STEPS] and rotate [ANGLE]',
-                    arguments: {
-                        STEPS: {
-                            type: ArgumentType.NUMBER,
-                            defaultValue: 80
-                        },
                         ANGLE: {
                             type: ArgumentType.ANGLE,
+                            defaultValue: 10
                         }
                     }
-                }
-            ],
-
-            menus: {
-                menuTarget: {
-                    acceptReporters: true,
-                    items: this.getTargets()
                 },
-                menuMotor: {
-                    acceptReporters: false,
-                    items: [
-                        {
-                            text: 'left',
-                            value: 'l'
-                        },
-                        {
-                            text: 'right',
-                            value: 'r'
-                        }
-                    ]
+                {
+                    opcode: 'stop',
+                    blockType: BlockType.COMMAND,
+                    text: 'stop'
                 }
-            }
+            ]
         };
-    }
-
-    example (args, util) {
-        const steps = Cast.toNumber(args.STEPS);
-        const angle = Cast.toNumber(args.ANGLE);
-        const radians = MathUtil.degToRad((90 - util.target.direction));
-        const dx = steps * Math.cos(radians);
-        const dy = steps * Math.sin(radians);
-        util.target.setXY(util.target.x + dx, util.target.y + dy);
-        util.target.setDirection(util.target.direction + angle);
-    }
-
-    moveToTarget (args, util) {
-        const target = Cast.toNumber(args.TARGET);
-        if (target === 0) {
-            util.target.setXY(util.ioQuery('mouse', 'getScratchX'),util.ioQuery('mouse', 'getScratchY'));
-            return;
-        }
-        const targetName = this.targets[target].text;
-        const goToTarget = this.runtime.getSpriteTargetByName(targetName);
-        if (!goToTarget) return;
-        util.target.setXY(goToTarget.x, goToTarget.y);
     }
 
     sensor () {
@@ -181,22 +103,29 @@ class Tactode {
         return 2;
     }
 
-    turnMotorSeconds (args, util) {
-        const motorIndex = Cast.toString(args.MOTOR) === 'l' ? 0 : 1;
-        const time = Cast.toNumber(args.SEC);
-        console.log("Motor index " + motorIndex);
-        console.log("Time " + time);
+    goForward () {
+        console.log("Send go forward message ");
         
-        util.target.setXY(util.target.x + time, util.target.y);
+        this._socket.sendMessage({
+            message: 'Go forward message'
+        })
     }
 
-    turnMotorRotation (args, util) {
-        const motorIndex = Cast.toString(args.MOTOR) === 'l' ? 0 : 1;
-        const rots = Cast.toNumber(args.ROTS);
-        console.log("Motor index " + motorIndex);
-        console.log("Rotations " + rots);
+    turn (args) {
+        const angle = Cast.toNumber(args.ANGLE);
+        console.log("Send angle message with " + angle);
         
-        util.target.setXY(util.target.x + rots*2, util.target.y);
+        this._socket.sendMessage({
+            message: 'Turn angle',
+            angle: angle
+        })
+    }
+
+    stop () {
+        console.log("Send stop message");
+        this._socket.sendMessage({
+            message: 'Stop message'
+        })
     }
 }
 
