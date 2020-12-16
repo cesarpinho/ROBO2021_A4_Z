@@ -1,5 +1,4 @@
-class TactodeLinkWebSocket {
-    
+export class TactodeLinkWebSocket {
     constructor(type = 'Web') {       
         this._type = type
     }
@@ -81,5 +80,3 @@ class TactodeLinkWebSocket {
     }
 
 }
-
-module.exports = TactodeLinkWebSocket
