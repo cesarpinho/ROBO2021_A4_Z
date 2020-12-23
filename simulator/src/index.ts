@@ -1,27 +1,18 @@
-import { Application, Sprite, utils } from 'pixi.js'
-import { Robot } from './robot'
+import { Application, utils } from 'pixi.js'
+import { RobotModel } from 'Models/robot';
+import { RobotView } from 'Views/robot';
+import { RobotController } from 'Controllers/robot';
 
 utils.sayHello(utils.isWebGLSupported() ? "WebGL" : "canvas");
 
 const app = new Application();
 app.renderer.backgroundColor = 0xffffff;
-
 document.body.appendChild(app.view);
 
-app.loader.add('robot', '../assets/robot.png').load((_loader, resources) => {
-    const robotView = new Sprite(resources.robot.texture);
+const robotModel = new RobotModel(app.renderer.width, app.renderer.height);
+const robotView = new RobotView(app, robotModel);
+const _robotController = new RobotController(robotModel);
 
-    // Set origin to center
-    robotView.anchor.x = 0.5;
-    robotView.anchor.y = 0.5;
-
-    const robotModel = new Robot([app.renderer.width / 2, app.renderer.height / 2]);
-
-    // Add the robot to the scene
-    app.stage.addChild(robotView);
-
-    app.ticker.add((delta: Number) => {
-        robotModel.update(delta)
-        robotView.position.set(...robotModel.getPosition());
-    })
+app.loader.load((loader, resources) => {
+    robotView.load(loader, resources);
 });

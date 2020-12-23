@@ -107,7 +107,7 @@ class Tactode {
         console.log("Send go forward message ");
         
         this._socket.sendMessage({
-            message: 'Go forward message'
+            message: 'Go forward'
         })
     }
 
@@ -116,7 +116,7 @@ class Tactode {
         console.log("Send angle message with " + angle);
         
         this._socket.sendMessage({
-            message: 'Turn angle',
+            message: 'Turn',
             angle: angle
         })
     }
@@ -124,7 +124,7 @@ class Tactode {
     stop () {
         console.log("Send stop message");
         this._socket.sendMessage({
-            message: 'Stop message'
+            message: 'Stop'
         })
     }
 }
