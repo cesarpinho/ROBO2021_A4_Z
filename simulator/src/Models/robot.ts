@@ -42,6 +42,7 @@ export class RobotModel {
     update(delta: number): void {
         this._x += this._linearVelocity * Math.cos(-this._rotation) * delta;
         this._y -= this._linearVelocity * Math.sin(-this._rotation) * delta;
-        this._rotation += (this._angularVelocity * delta) % (2 * Math.PI);
+        this._rotation += this._angularVelocity * delta 
+        this._rotation %= 2 * Math.PI;
     }
 }
