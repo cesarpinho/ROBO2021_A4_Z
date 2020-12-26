@@ -1,4 +1,6 @@
 export class RobotModel {
+    static readonly PIXELS_TO_METER = 500;
+
     private _x: number;
     private _y: number;
     private _rotation: number;
@@ -6,20 +8,19 @@ export class RobotModel {
     private _angularVelocity: number;
     
     get x(): number {
-        return this._x;
+        return RobotModel.PIXELS_TO_METER * this._x;
     }
 
     get y(): number {
-        return this._y;
+        return RobotModel.PIXELS_TO_METER * this._y;
     }
 
     get rotation(): number {
         return this._rotation;
     }
 
-    // Angle supplied in degrees, converted to radians (Using PIXI.js naming convention of angle->degrees, rotation->radians)
-    set angle(angle: number) {
-        this._angularVelocity = angle * Math.PI / 180;
+    get angle(): number {
+        return this._rotation * 180 / Math.PI;
     }
 
     set linearVelocity(linear: number) {
@@ -31,8 +32,8 @@ export class RobotModel {
     }
 
     constructor(canvasWidth: number, canvasHeight: number) {
-        this._x = canvasWidth / 2;
-        this._y = canvasHeight / 2;
+        this._x = canvasWidth / (2 * RobotModel.PIXELS_TO_METER);
+        this._y = canvasHeight / (2 * RobotModel.PIXELS_TO_METER);
         this._rotation = this.linearVelocity = this.angularVelocity = 0;
     }
 

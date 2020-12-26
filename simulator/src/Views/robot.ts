@@ -24,8 +24,8 @@ export class RobotView {
         // Add the robot to the scene
         this._app.stage.addChild(sprite);
 
-        this._app.ticker.add((delta: number) => {
-            this._robotModel.update(delta);
+        this._app.ticker.add(() => {
+            this._robotModel.update(0.001 * this._app.ticker.elapsedMS);
 
             sprite.position.set(this._robotModel.x, this._robotModel.y);
             sprite.rotation = this._robotModel.rotation;

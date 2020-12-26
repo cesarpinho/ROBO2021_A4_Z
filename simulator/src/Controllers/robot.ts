@@ -4,6 +4,7 @@ import { RobotModel } from 'Models/robot';
 interface Message {
     message: String, 
     angle?: number,
+    direction?: number,
 }
 
 export class RobotController {
@@ -21,14 +22,15 @@ export class RobotController {
     handleMessage(data: Message): void {
         switch (data.message) {
             case 'Go forward':
-                this._robotModel.linearVelocity = 1;
+                this._robotModel.linearVelocity = 0.2;
+                this._robotModel.angularVelocity = 0;
                 break;
             case 'Turn':
-                this._robotModel.angle = data.angle;
+                this._robotModel.angularVelocity = !!data.direction ? 0.5 * Math.PI : -0.5 * Math.PI;
                 break;
             case 'Stop':
                 this._robotModel.linearVelocity = 0;
-                this._robotModel.angle = 0;
+                this._robotModel.angularVelocity = 0;
                 break;
         }
     }
