@@ -16,9 +16,16 @@ export class RobotController {
         const tactodeLinkWebSocket = new TactodeLinkWebSocket();
         tactodeLinkWebSocket.setHandleMessage(this.handleMessage.bind(this));
         tactodeLinkWebSocket.open();
+
+        setInterval(() => {
+            tactodeLinkWebSocket.sendMessage({
+                x: this._robotModel.x,
+                y: this._robotModel.y,
+                angle: this._robotModel.angle,
+            });
+        }, 100);
     }
 
-    
     handleMessage(data: Message): void {
         switch (data.message) {
             case 'Go forward':
