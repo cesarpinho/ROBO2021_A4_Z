@@ -9,9 +9,7 @@ export class RobotView {
         this._app = app;
         this._robotModel = robotModel;
 
-        document.body.appendChild(app.view);
-
-        app.loader.add('robot', '../assets/robot.png')
+        this._app.loader.add('robot', '../assets/robot.png')
     }
 
     load(_loader: PIXI.Loader, resources: Partial<Record<string, PIXI.LoaderResource>>) {
