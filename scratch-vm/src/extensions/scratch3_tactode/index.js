@@ -1,63 +1,29 @@
-const ArgumentType = require('../../extension-support/argument-type');
-const BlockType = require('../../extension-support/block-type');
+const ArgumentType = require('../../extension-support/argument-type')
+const BlockType = require('../../extension-support/block-type')
 
-const Cast = require('../../util/cast');
-const MathUtil = require('../../util/math-util');
-const Robot = require('./robot');
-const TactodeLinkWebSocket = require('./tactode-link-websocket');
+const Cast = require('../../util/cast')
+const SimulatedRobot = require('./simulatedRobot')
 
-class Tactode {
+class Scratch3Tactode {
 
     static get EXTENSION_ID () {
-        return 'tactode';
+        return 'tactode'
     }
 
     constructor (runtime) {
-        this.runtime = runtime;
+        this.runtime = runtime
+        this._peripheral = new SimulatedRobot(this.runtime, Scratch3Tactode.EXTENSION_ID)
+        this._peripheral.connect()
 
-        this._socket = new TactodeLinkWebSocket('Web');
-        this._socket.setHandleMessage(() => {
-            console.log("Handle Message Tactode extension")
-        })
-        this._socket.open();
-
-        this._peripheral = new Robot(this.runtime, Tactode.EXTENSION_ID)
     }
 
-    
-    // getTargets () {
-    //     this.targets = [ {
-    //         text: 'mouse pointer',
-    //         value: '0'
-    //     }];
-    //     let counter = 1;
-    //     const actualTarget = this.runtime.getEditingTarget();
-
-
-    //     if (actualTarget === undefined || actualTarget === null)
-    //         return this.targets;
-
-    //     // substitute value 10
-    //     for (let i = 0; i < 10; i++) {
-    //         const value = this.runtime.getTargetByDrawableId(i)
-    //         if (value !== undefined && !value.isStage && 
-    //             value.sprite.name !== actualTarget.sprite.name) {
-    //             const obj = {};
-    //             obj.text = value.sprite.name;
-    //             obj.value = counter.toString();
-    //             this.targets.push(obj);
-    //             counter++;
-    //         }
-    //     }
-    //     return this.targets;
-    // }
 
     /**
      * @return {object} This extension's metadata.
      */
     getInfo () {
         return {
-            id: Tactode.EXTENSION_ID,
+            id: Scratch3Tactode.EXTENSION_ID,
 
             // opcional
             color1: '#444f82',
@@ -79,11 +45,23 @@ class Tactode {
                 {
                     opcode: 'turn',
                     blockType: BlockType.COMMAND,
-                    text: 'turn [ANGLE]',
+                    text: 'turn [DIRECTION]',
+                    arguments: {
+                        DIRECTION: {
+                            type: ArgumentType.STRING,
+                            menu: 'menuDirection',
+                            defaultValue: 0
+                        }
+                    }
+                },
+                {
+                    opcode: 'rotate',
+                    blockType: BlockType.COMMAND,
+                    text: 'rotate [ANGLE]',
                     arguments: {
                         ANGLE: {
                             type: ArgumentType.ANGLE,
-                            defaultValue: 10
+                            defaultValue: 15
                         }
                     }
                 },
@@ -92,41 +70,66 @@ class Tactode {
                     blockType: BlockType.COMMAND,
                     text: 'stop'
                 }
-            ]
-        };
+            ],
+            menus: {
+                menuDirection: {
+                    items: [
+                        {
+                            text: 'left',
+                            value: 0
+                        },
+                        {
+                            text: 'right',
+                            value: 1
+                        }
+                    ]
+                }
+            }
+        }
     }
 
     sensor () {
-        this._socket.sendMessage({
+        this._peripheral.send({
             message: 'Sensor message'
         })
-        return 2;
+
+        // ! The value returned isn't the more recent replied 
+        return this._peripheral.sensor
     }
 
     goForward () {
-        console.log("Send go forward message ");
+        console.log("Send go forward message ")
         
-        this._socket.sendMessage({
+        this._peripheral.send({
             message: 'Go forward'
         })
     }
 
     turn (args) {
-        const angle = Cast.toNumber(args.ANGLE);
-        console.log("Send angle message with " + angle);
-        
-        this._socket.sendMessage({
-            message: 'Turn',
+        const direction = Cast.toNumber(args.DIRECTION)
+        console.log("Send turn message with value " + direction)
+
+        this._peripheral.send({
+            message: 'turn',
+            direction: direction
+        })
+
+    }
+
+    rotate (args) {
+        const angle = Cast.toNumber(args.ANGLE)
+        console.log("Send rotate message with value " + angle)
+
+        this._peripheral.send({
+            message: 'Rotate',
             angle: angle
         })
     }
 
     stop () {
-        console.log("Send stop message");
-        this._socket.sendMessage({
-            message: 'Stop'
-        })
+        console.log("Send stop message")
+        this._peripheral.stopAll()
     }
 }
 
-module.exports = Tactode
+module.exports = Scratch3Tactode

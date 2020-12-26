@@ -333,6 +333,6 @@ export default [
         ),
         featured: true,
         disabled: false,
-        internetConnectionRequired: true,
+        internetConnectionRequired: true
     }
 ];
