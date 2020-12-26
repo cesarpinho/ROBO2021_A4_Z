@@ -110,7 +110,7 @@ class Scratch3Tactode {
         console.log("Send turn message with value " + direction)
 
         this._peripheral.send({
-            message: 'turn',
+            message: 'Turn',
             direction: direction
         })
 
