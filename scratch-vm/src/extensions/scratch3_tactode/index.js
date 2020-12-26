@@ -38,6 +38,21 @@ class Scratch3Tactode {
                     text: 'line distance'
                 },
                 {
+                    opcode: 'x',
+                    blockType: BlockType.REPORTER,
+                    text: 'robot x position'
+                },
+                {
+                    opcode: 'y',
+                    blockType: BlockType.REPORTER,
+                    text: 'robot y position'
+                },
+                {
+                    opcode: 'direction',
+                    blockType: BlockType.REPORTER,
+                    text: 'robot direction'
+                },
+                {
                     opcode: 'goForward',
                     blockType: BlockType.COMMAND,
                     text: 'go forward'
@@ -89,12 +104,19 @@ class Scratch3Tactode {
     }
 
     sensor () {
-        this._peripheral.send({
-            message: 'Sensor message'
-        })
-
-        // ! The value returned isn't the more recent replied 
         return this._peripheral.sensor
+    }
+
+    x () {
+        return this._peripheral.x
+    }
+
+    y () {
+        return this._peripheral.y
+    }
+
+    direction () {
+        return this._peripheral.direction
     }
 
     goForward () {

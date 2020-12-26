@@ -11,6 +11,9 @@ class SimulatedRobot {
          */
         this._runtime = runtime;
         this._runtime.on('PROJECT_STOP_ALL', this.stopAll.bind(this));
+
+        this._position = [null, null];
+        this._direction = 0;
         this._sensor = 0;
 
         this._socket = null;
@@ -20,6 +23,18 @@ class SimulatedRobot {
         this._rateLimiter = new RateLimiter(RATE_LIMITER);
 
         this._onMessage = this._onMessage.bind(this);
+    }
+
+    get x () {
+        return this._position[0];
+    }
+
+    get y () {
+        return this._position[1];
+    }
+
+    get direction () {
+        return this._direction;
     }
 
     get sensor () {
@@ -63,17 +78,22 @@ class SimulatedRobot {
         if (useLimiter && !this._rateLimiter.okayToSend()) return Promise.resolve();
 
         return this._socket.sendMessage(message);
-
-        // ? Nedeed encode message? 
-        // return this._socket.sendMessage({
-        //     message: Base64Util.uint8ArrayToBase64(message),
-        //     encoding: 'base64'
-        // });
     }
 
-    _onMessage () {
-        // TODO: Parse reply messages
-        console.log("message parsed")
+    _onMessage (params) {
+        const x = params.x;
+        const y = params.y;
+        const angle = params.angle;
+        const sensor = params.sensor;
+
+        if (x !== undefined) 
+            this._position[0] = x;
+        if (y !== undefined) 
+            this._position[1] = y;
+        if (angle !== undefined)
+            this._direction = angle;
+        if (sensor !== undefined)
+            this._sensor = sensor;
     }
 
 }
