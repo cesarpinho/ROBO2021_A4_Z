@@ -1,4 +1,4 @@
-import { Application, Sprite } from 'pixi.js'
+import { Application, Sprite, InteractionEvent } from 'pixi.js'
 import { RobotModel } from 'Models/robot'
 
 export class RobotView {
@@ -12,7 +12,7 @@ export class RobotView {
         this._app.loader.add('robot', '../assets/robot.png')
     }
 
-    load(_loader: PIXI.Loader, resources: Partial<Record<string, PIXI.LoaderResource>>) {
+    public load(_loader: PIXI.Loader, resources: Partial<Record<string, PIXI.LoaderResource>>) {
         const sprite = new Sprite(resources.robot.texture);
 
         // Set origin to center

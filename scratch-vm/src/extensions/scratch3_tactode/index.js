@@ -35,7 +35,7 @@ class Scratch3Tactode {
                 {
                     opcode: 'sensor',
                     blockType: BlockType.REPORTER,
-                    text: 'line distance'
+                    text: 'line offset'
                 },
                 {
                     opcode: 'x',

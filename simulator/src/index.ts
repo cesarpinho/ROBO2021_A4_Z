@@ -12,9 +12,10 @@ document.body.appendChild(app.view);
 
 const robotModel = new RobotModel(app.renderer.width, app.renderer.height);
 const robotView = new RobotView(app, robotModel);
-const robotController = new RobotController(robotModel);
 
 const lineView = new LineView(app);
+
+const robotController = new RobotController(robotModel, lineView);
 
 app.loader.load((loader, resources) => {
     robotView.load(loader, resources);

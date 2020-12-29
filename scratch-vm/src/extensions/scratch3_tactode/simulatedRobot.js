@@ -84,7 +84,7 @@ class SimulatedRobot {
         const x = params.x;
         const y = params.y;
         const angle = params.angle;
-        const sensor = params.sensor;
+        const lineOffset = params.lineOffset;
 
         if (x !== undefined) 
             this._position[0] = x;
@@ -92,8 +92,8 @@ class SimulatedRobot {
             this._position[1] = y;
         if (angle !== undefined)
             this._direction = angle;
-        if (sensor !== undefined)
-            this._sensor = sensor;
+        if (lineOffset !== undefined)
+            this._sensor = lineOffset;
     }
 
 }

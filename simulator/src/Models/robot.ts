@@ -1,5 +1,6 @@
 export class RobotModel {
     static readonly PIXELS_TO_METER = 500;
+    static readonly PIXELS_RADIUS = 25; // Adjust according to image dimensions 
 
     private _x: number;
     private _y: number;
