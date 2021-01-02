@@ -70,17 +70,6 @@ class Scratch3Tactode {
                     }
                 },
                 {
-                    opcode: 'rotate',
-                    blockType: BlockType.COMMAND,
-                    text: 'rotate [ANGLE]',
-                    arguments: {
-                        ANGLE: {
-                            type: ArgumentType.ANGLE,
-                            defaultValue: 15
-                        }
-                    }
-                },
-                {
                     opcode: 'stop',
                     blockType: BlockType.COMMAND,
                     text: 'stop'
@@ -136,16 +125,6 @@ class Scratch3Tactode {
             direction: direction
         })
 
-    }
-
-    rotate (args) {
-        const angle = Cast.toNumber(args.ANGLE)
-        console.log("Send rotate message with value " + angle)
-
-        this._peripheral.send({
-            message: 'Rotate',
-            angle: angle
-        })
     }
 
     stop () {
