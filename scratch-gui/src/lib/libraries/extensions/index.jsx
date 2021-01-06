@@ -46,6 +46,9 @@ import gdxforInsetIconURL from './gdxfor/gdxfor-small.svg';
 import gdxforConnectionIconURL from './gdxfor/gdxfor-illustration.svg';
 import gdxforConnectionSmallIconURL from './gdxfor/gdxfor-small.svg';
 
+import tactodeIconURL from './tactode/tactode.png';
+import tactodeInsetIconURL from './tactode/tactode-small.png';
+
 export default [
     {
         name: (
@@ -322,11 +325,11 @@ export default [
         name: 'Tactode',
         extensionId: 'tactode',
         collaborator: 'Tactode',
-        iconURL: ev3IconURL,
-        insetIconURL: wedo2InsetIconURL,
+        iconURL: tactodeIconURL,
+        insetIconURL: tactodeInsetIconURL,
         description: (
             <FormattedMessage
-                defaultMessage="Tactode"
+                defaultMessage="Bring robotic devices to life."
                 description="extension"
                 id="gui.extension.tactode.description"
             />

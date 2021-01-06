@@ -1,5 +1,5 @@
-import { Application, Sprite, InteractionEvent } from 'pixi.js'
-import { RobotModel } from 'Models/robot'
+import { Application, Sprite, InteractionEvent } from 'pixi.js';
+import { RobotModel } from 'Models/robot';
 
 export class RobotView {
     private _app: Application;
@@ -9,7 +9,7 @@ export class RobotView {
         this._app = app;
         this._robotModel = robotModel;
 
-        this._app.loader.add('robot', '../assets/robot.png')
+        this._app.loader.add('robot', 'assets/robot.png');
     }
 
     public load(_loader: PIXI.Loader, resources: Partial<Record<string, PIXI.LoaderResource>>) {

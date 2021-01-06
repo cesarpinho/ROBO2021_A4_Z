@@ -1,7 +1,9 @@
 const path = require('path');
 
 module.exports = {
+  mode: 'development',
   entry: './src/index.ts',
+  devtool: 'inline-source-map',
   module: {
     rules: [
       {
@@ -21,6 +23,10 @@ module.exports = {
       path.resolve('src'),
       path.resolve('node_modules'),
     ],
+  },
+  devServer: {
+    contentBase: './dist',
+    port: 8081,
   },
   output: {
     filename: 'bundle.js',
